@@ -118,8 +118,10 @@ async function takePlainPuppeteerScreenshot(url, options) {
     try {
         browser = await puppeteer.launch(options.launchOptions);
         page = await browser.newPage();
-        await page.goto(url);
-       
+        await page.goto(url, {
+            waitUntil: 'domcontentloaded',
+            timeout: 60000
+        });
         await setViewport(page, options);
         await new Promise(r => setTimeout(r, options.wait_before_screenshot_ms));
         buffer = await page.screenshot();
@@ -215,7 +217,7 @@ async function extractPlainPuppeteerLogo(url, options) {
         page = await browser.newPage();
         await page.goto(url, { 
             waitUntil: 'domcontentloaded',
-            timeout: 30000 
+            timeout: 60000 
         });
 
         // Extract logo URL

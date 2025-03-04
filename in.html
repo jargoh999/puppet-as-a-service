@@ -20,10 +20,10 @@
         // Get desktop screen width and height
         const desktopWidth = window.screen.width;
         const desktopHeight = window.screen.height;
-        const url = 'https://github.com';
+        const url = 'https://mtn.com';
 
         // Capture screenshot
-        fetch(`http://localhost:8080/capture?url=${url}&width=${desktopWidth}&height=${desktopHeight}`, {
+        fetch(`https://puppet-as-a-service-2.onrender.com/capture?url=${url}&width=${desktopWidth}&height=${desktopHeight}`, {
             method: 'GET',
             mode: 'cors',
             headers: {
@@ -45,7 +45,7 @@
             });
 
         // Extract logo
-        fetch(`http://localhost:8080/logo?url=${url}`, {
+        fetch(`https://puppet-as-a-service-2.onrender.com/logo?url=${url}`, {
             method: 'GET',
             mode: 'cors',
             headers: {
