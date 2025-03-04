@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <div>
+        <h2>Website Screenshot</h2>
+        <img id="screenshot" style="max-width: 100%;" />
+    </div>
+    <div>
+        <h2>Website Logo</h2>
+        <img id="logo" style="max-width: 200px;" />
+    </div>
+    <div id="error-log"></div>
+    <script>
+        function logError(message) {
+            console.error(message);
+            document.getElementById('error-log').innerHTML += `<p>${message}</p>`;
+        }
+
+        // Get desktop screen width and height
+        const desktopWidth = window.screen.width;
+        const desktopHeight = window.screen.height;
+        const url = 'https://github.com';
+
+        // Capture screenshot
+        fetch(`http://localhost:8080/capture?url=${url}&width=${desktopWidth}&height=${desktopHeight}`, {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const screenshotUrl = URL.createObjectURL(blob);
+                document.getElementById('screenshot').src = screenshotUrl;
+            })
+            .catch(error => {
+                logError(`Screenshot Error: ${error.message}`);
+            });
+
+        // Extract logo
+        fetch(`http://localhost:8080/logo?url=${url}`, {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const logoUrl = URL.createObjectURL(blob);
+                document.getElementById('logo').src = logoUrl;
+            })
+            .catch(error => {
+                logError(`Logo Extraction Error: ${error.message}`);
+            });
+    </script>
+</body>
+
+</html>
