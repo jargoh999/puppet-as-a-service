@@ -20,10 +20,12 @@
         // Get desktop screen width and height
         const desktopWidth = window.screen.width;
         const desktopHeight = window.screen.height;
-        const url = 'https://mtn.com';
+        const url = 'https://github.com/';
 
         // Capture screenshot
-        fetch(`https://puppet-as-a-service-2.onrender.com/capture?url=${url}&width=${desktopWidth}&height=${desktopHeight}`, {
+
+        // fetch(`https://puppet-as-a-service-2.onrender.com/capture?url=${url}&width=${desktopWidth}&height=${desktopHeight}`, {
+        fetch(`http://localhost:8080/capture?url=${url}&width=${desktopWidth}&height=${desktopHeight}`, {
             method: 'GET',
             mode: 'cors',
             headers: {
@@ -45,7 +47,7 @@
             });
 
         // Extract logo
-        fetch(`https://puppet-as-a-service-2.onrender.com/logo?url=${url}`, {
+        fetch(`http://localhost:8080/logo?url=${url}`, {
             method: 'GET',
             mode: 'cors',
             headers: {
@@ -59,8 +61,24 @@
                 return response.blob();
             })
             .then(blob => {
+                // Determine blob type
+                const logoElement = document.getElementById('logo');
                 const logoUrl = URL.createObjectURL(blob);
-                document.getElementById('logo').src = logoUrl;
+
+                // Check if it's an SVG
+                if (blob.type === 'image/svg+xml') {
+                    // For SVG, use object tag for better rendering
+                    const svgObject = document.createElement('object');
+                    svgObject.type = 'image/svg+xml';
+                    svgObject.data = logoUrl;
+                    svgObject.style.maxWidth = '200px';
+
+                    // Replace img with object
+                    logoElement.parentNode.replaceChild(svgObject, logoElement);
+                } else {
+                    // For other image types, use img as before
+                    logoElement.src = logoUrl;
+                }
             })
             .catch(error => {
                 logError(`Logo Extraction Error: ${error.message}`);

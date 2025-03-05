@@ -1,10 +1,10 @@
 import captureWebsite from 'capture-website';
 import puppeteer from 'puppeteer';
 import PQueue from "p-queue";
-import {getConcurrency, getDefaultTimeoutSeconds, getSecret, getShowResults} from "./config.js";
+import { getConcurrency, getDefaultTimeoutSeconds, getSecret, getShowResults } from "./config.js";
 import 'dotenv/config';
 
-export const queue = new PQueue({concurrency: getConcurrency()});
+export const queue = new PQueue({ concurrency: getConcurrency() });
 
 const latest = {
     capture: undefined,
@@ -215,20 +215,20 @@ async function extractPlainPuppeteerLogo(url, options) {
     try {
         browser = await puppeteer.launch(options.launchOptions);
         page = await browser.newPage();
-        await page.goto(url, { 
+        await page.goto(url, {
             waitUntil: 'domcontentloaded',
-            timeout: 60000 
+            timeout: 60000
         });
 
         // Extract logo URL
         const logoUrl = await page.evaluate(() => {
             // Strategy 1: Look for link rel="icon" or apple-touch-icon
             const linkIcons = [
-                'link[rel="icon"]', 
-                'link[rel="shortcut icon"]', 
+                'link[rel="icon"]',
+                'link[rel="shortcut icon"]',
                 'link[rel="apple-touch-icon"]'
             ];
-            
+
             for (const selector of linkIcons) {
                 const iconLink = document.querySelector(selector);
                 if (iconLink && iconLink.href) {
@@ -238,13 +238,13 @@ async function extractPlainPuppeteerLogo(url, options) {
 
             // Strategy 2: Look for img tags with logo-related classes
             const logoSelectors = [
-                'img.logo', 
-                '.logo', 
-                '#logo', 
-                'img[alt*="logo"]', 
+                'img.logo',
+                '.logo',
+                '#logo',
+                'img[alt*="logo"]',
                 'img[title*="logo"]'
             ];
-            
+
             for (const selector of logoSelectors) {
                 const logoImg = document.querySelector(selector);
                 if (logoImg && logoImg.src) {
@@ -283,5 +283,3 @@ async function extractPlainPuppeteerLogo(url, options) {
 
     return buffer;
 }
-
-
