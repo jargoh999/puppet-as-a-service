@@ -19,6 +19,7 @@ const corsOptions = {
             'file:///',
             'https://hng-task-8af4f.web.app/*',
             'https://hng-task-8af4f.web.app',
+            "http://localhost:8080",
             undefined, // for same-origin requests
             '*'
         ];
