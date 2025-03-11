@@ -1,0 +1,49 @@
+name: Deploy Node.js App
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker image
+        run: docker build -t jargoh999/project_mgt:latest .
+
+      - name: Push Docker image to Docker Hub
+        run: docker push jargoh999/project_mgt:latest
+
+      - name: Deploy to AWS EC2
+        env:
+          AWS_PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY }}
+          AWS_HOST: ${{ secrets.AWS_HOST }}
+        run: |
+          echo "${{ secrets.AWS_PRIVATE_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ secrets.AWS_HOST }} << 'EOF'
+            sudo chmod 666 /var/run/docker.sock
+            docker pull jargoh999/project_mgt:latest
+            docker stop project_mgt || true
+            docker rm project_mgt || true
+            docker run -d --name project_mgt -p 8080:8080 jargoh999/project_mgt:latest
+          EOF
