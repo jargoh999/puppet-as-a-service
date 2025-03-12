@@ -58,7 +58,7 @@ export function allowedRequest(queryParameters) {
 export function getOptions(queryParameters) {
     const result = parseQueryParameters(queryParameters);
     result.launchOptions = {
-        // headless: false,
+         headless: true,
         args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',
