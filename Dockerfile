@@ -1,8 +1,8 @@
-# Use a Windows-based Node.js image as a base
-FROM mcr.microsoft.com/windows/servercore:ltsc2019
+# Use the official Node.js image as a base
+FROM node:16
 
 # Set the working directory in the container
-WORKDIR C:\app
+WORKDIR /usr/src/app
 
 # Copy package.json and package-lock.json (if available)
 COPY package*.json ./
@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 8080
 
 # Command to run your application
-CMD ["node", "src\\index.js"]
+CMD ["node", "src/index.js"]
